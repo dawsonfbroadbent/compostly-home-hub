@@ -34,12 +34,20 @@ const Index = () => {
             <p className="mt-4 text-lg text-primary-foreground/80">
               Transform your kitchen scraps into garden gold. Start composting at home today — it's easier than you think.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/signup">
-                <Button size="lg" className="gap-2">
-                  Get Started <ArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
+            <form onSubmit={handleEmailSubmit} className="mt-8 flex max-w-md gap-2">
+              <Input
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="flex-1 bg-white/90 text-foreground"
+              />
+              <Button type="submit" size="lg" className="gap-2">
+                Get Started <ArrowRight className="h-4 w-4" />
+              </Button>
+            </form>
+            <div className="mt-4">
               <Link to="/contact">
                 <Button size="lg" variant="secondary">
                   Contact Us
@@ -106,26 +114,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Newsletter */}
-      <section className="py-20">
-        <div className="container mx-auto max-w-md px-4 text-center">
-          <h2 className="font-display text-3xl font-bold mb-3">Stay in the Loop</h2>
-          <p className="text-muted-foreground mb-6">
-            Get composting tips, seasonal guides, and community updates.
-          </p>
-          <form onSubmit={handleEmailSubmit} className="flex gap-2">
-            <Input
-              type="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="flex-1"
-            />
-            <Button type="submit">Subscribe</Button>
-          </form>
-        </div>
-      </section>
     </div>
   );
 };
