@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Leaf } from "lucide-react";
+import compostlyLogo from "@/assets/compostly-logo.png";
 
 const Footer = () => (
   <footer className="border-t bg-card py-10">
@@ -7,8 +7,7 @@ const Footer = () => (
       <div className="grid gap-8 md:grid-cols-3">
         <div>
           <div className="flex items-center gap-2 mb-3">
-            <Leaf className="h-5 w-5 text-primary" />
-            <span className="font-display text-lg font-bold">Compostly</span>
+            <img src={compostlyLogo} alt="Compostly" className="h-7" />
           </div>
           <p className="text-sm text-muted-foreground">
             Making home composting simple, sustainable, and rewarding.
