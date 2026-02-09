@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Menu, X, ChevronDown, Leaf } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
+import compostlyLogo from "@/assets/compostly-logo.png";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,10 +23,7 @@ const Navbar = () => {
     <nav className="sticky top-0 z-50 border-b bg-card/80 backdrop-blur-md">
       <div className="container mx-auto flex items-center justify-between px-4 py-3">
         <Link to="/" className="flex items-center gap-2">
-          <Leaf className="h-7 w-7 text-primary" />
-          <span className="font-display text-2xl font-bold text-foreground">
-            C<span className="text-primary">o</span>mpostly
-          </span>
+          <img src={compostlyLogo} alt="Compostly" className="h-9" />
         </Link>
 
         {/* Desktop nav */}
