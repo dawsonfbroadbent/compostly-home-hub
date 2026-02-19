@@ -16,7 +16,7 @@ Backend:
 
 ## Architecture Diagram
 
-#TODO
+<img src="public/System_Architecture_Diagram.png" alt="Architecture Diagram" width="600">
 
 ## Prerequisites
 To run this project locally, you need:
