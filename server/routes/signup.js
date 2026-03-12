@@ -6,7 +6,7 @@ const router = Router();
 
 router.post("/signup", async (req, res) => {
   const pool = getPool();
-  const { firstName, lastName, email, password } = req.body || {};
+  const { firstName, lastName, email, password, address, pickupOrDropoff } = req.body || {};
 
   if (!firstName?.trim() || !lastName?.trim() || !email?.trim() || !password) {
     return res.status(400).json({
@@ -24,10 +24,10 @@ router.post("/signup", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const result = await pool.query(
-      `INSERT INTO user_account (first_name, last_name, email, password)
-       VALUES ($1, $2, $3, $4)
-       RETURNING user_id, first_name, last_name, email`,
-      [firstName.trim(), lastName.trim(), email.trim().toLowerCase(), hashedPassword]
+      `INSERT INTO user_account (first_name, last_name, email, password, address, pickup_or_dropoff)
+       VALUES ($1, $2, $3, $4, $5, $6)
+       RETURNING user_id, first_name, last_name, email, address, pickup_or_dropoff`,
+      [firstName.trim(), lastName.trim(), email.trim().toLowerCase(), hashedPassword, address?.trim() || null, pickupOrDropoff?.trim() || null]
     );
 
     const row = result.rows[0];
@@ -36,6 +36,8 @@ router.post("/signup", async (req, res) => {
       first_name: row.first_name,
       last_name: row.last_name,
       email: row.email,
+      address: row.address,
+      pickup_or_dropoff: row.pickup_or_dropoff,
     };
 
     res.status(201).json({ user });
