@@ -1,6 +1,7 @@
 import aboutImage from "@/assets/about-hero-composting.png";
 import garrettHeadshot from "@/assets/headshot-garrett.jpg";
 import brocHeadshot from "@/assets/headshot-broc.jpeg";
+import ethanHeadshot from "@/assets/headshot-ethan.jpg";
 import { Leaf, Heart, TreePine } from "lucide-react";
 
 const AboutUs = () => (
@@ -86,7 +87,7 @@ const AboutUs = () => (
           {[
             { name: "Garrett Nelson", role: "Investor | Advisor | PhD in Investing | PhD in Making Money | Master in Spending Money | Bachelor in Loving Wife | Minor in Loving Goldfish", img: garrettHeadshot },
             { name: "Logan Reeder", role: "CEO | Co-Founder | PhD in Wife Listening | Master in Wife Finding | Professional Comedian | Minor in Acting Busy" },
-            { name: "Ethan Housley", role: "CTO | Founder | PhD in Looking Busy | Master in Procrastination | Bachelor in Having A Girlfriend and A Wife | Minor in Keeping Secrets" },
+            { name: "Ethan Housley", role: "CTO | Founder | PhD in Looking Busy | Master in Procrastination | Bachelor in Having A Girlfriend and A Wife | Minor in Keeping Secrets", img: ethanHeadshot },
             { name: "Dawson Broadbent", role: "CMO | PhD in Making Things Look Good | Master in Shed Hunting | Bachelor in Dope Kicks | Minor in Looking Over Shoulder When Merging " },
             { name: "Michael Jones", role: "CFO | PhD in Being Smart | PhD in Merging to Main Without Testing | Minor in It Works on My Machine" },
             { name: "Garret Safsten", role: "CRO | PhD in Being Another Garrett | PhD in Not Being Garrett Nelson | Bachelor in Taking Credit | Minor in The Heart is A Muscle, Train It Till Failure" },
