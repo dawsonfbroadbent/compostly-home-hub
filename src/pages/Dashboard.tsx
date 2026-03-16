@@ -70,9 +70,6 @@ const Dashboard = () => {
               </CardContent>
             </Card>
           </TabsContent>
-          <Link to="/pickup">
-            <Button>Pickup Instructions</Button>
-          </Link>
 
           <TabsContent value="finances">
             <Card>
