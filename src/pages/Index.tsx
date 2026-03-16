@@ -113,25 +113,6 @@ const Index = () => {
                 </Button>
               </Link>
             </div>
-            <div className="rounded-xl border bg-card p-8 text-center transition-shadow hover:shadow-lg w-full max-w-sm opacity-60">
-              <div className="inline-block bg-primary/10 text-primary text-xs font-semibold px-3 py-1 rounded-full mb-3">
-                Coming Soon
-              </div>
-              <h3 className="font-display text-xl font-semibold mb-2">Pro</h3>
-              <p className="font-display text-4xl font-bold text-primary mb-1">
-                $20
-                <span className="text-lg font-normal text-muted-foreground">
-                  /mo
-                </span>
-              </p>
-              <p className="text-sm text-muted-foreground mb-6">
-                Everything in Basic, plus priority support, advanced analytics,
-                and another bin.
-              </p>
-              <Button className="w-full gap-2" disabled>
-                Coming Soon
-              </Button>
-            </div>
           </div>
         </div>
       </section>
@@ -140,7 +121,7 @@ const Index = () => {
       <section className="py-20">
         <div className="container mx-auto px-4">
           <h2 className="font-display text-3xl font-bold text-center mb-12">
-            We've Done the Dirty Work
+            What you need to do:
           </h2>
           <div className="grid gap-8 md:grid-cols-3">
             {[
