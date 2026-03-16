@@ -17,6 +17,7 @@ import FAQ from "./pages/FAQ";
 import Contact from "./pages/Contact";
 import WhatToCompost from "./pages/WhatToCompost";
 import NotFound from "./pages/NotFound";
+import ScrollToTop from "./pages/ScrollToTop";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <ScrollToTop />
         <AuthProvider>
           <div className="flex min-h-screen flex-col">
             <Navbar />
