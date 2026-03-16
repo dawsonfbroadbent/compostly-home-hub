@@ -24,28 +24,6 @@ interface FAQItem {
 // ---------------------------------------------------------------------------
 // Data
 // ---------------------------------------------------------------------------
-const dropOffLocations = [
-  {
-    name: "Green Earth Co-op",
-    address: "142 Elm St",
-    hours: "Mon–Sat, 8am–6pm",
-  },
-  {
-    name: "Riverside Community Garden",
-    address: "890 River Rd",
-    hours: "Daily, 7am–8pm",
-  },
-  {
-    name: "Northgate Farmers Market",
-    address: "55 Market Pl",
-    hours: "Sat only, 8am–1pm",
-  },
-  {
-    name: "Westside Library",
-    address: "310 Oak Ave",
-    hours: "Mon–Fri, 9am–5pm",
-  },
-];
 
 const faqs: FAQItem[] = [
   {
@@ -280,62 +258,6 @@ const Pickup = () => {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ------------------------------------------------------------------ */}
-      {/* DROP-OFF                                                            */}
-      {/* ------------------------------------------------------------------ */}
-      <section id="drop-off" className="py-20 bg-muted scroll-mt-8">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-              <Navigation className="h-5 w-5 text-primary" />
-            </div>
-            <h2 className="font-display text-3xl font-bold">
-              Drop-Off Locations
-            </h2>
-          </div>
-          <p className="text-muted-foreground mb-10 ml-[52px]">
-            Prefer to drop off yourself? Bring your sealed compostable bag to
-            any of our partner locations below. Your Compostly membership card
-            is required.
-          </p>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            {dropOffLocations.map((loc) => (
-              <div
-                key={loc.name}
-                className="rounded-xl border bg-card p-5 hover:shadow-md transition-shadow"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 mt-0.5">
-                    <MapPin className="h-4 w-4 text-primary" />
-                  </div>
-                  <div>
-                    <p className="font-semibold">{loc.name}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {loc.address}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      🕐 {loc.hours}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-6 rounded-xl border bg-card p-5 text-sm">
-            <p className="font-semibold mb-2">What to bring</p>
-            <ul className="text-muted-foreground space-y-1 list-disc list-inside">
-              <li>
-                Scraps sealed in a compostable liner bag (provided in your kit)
-              </li>
-              <li>Your Compostly membership card — digital or physical</li>
-              <li>No loose scraps; bins at partner locations are shared</li>
-            </ul>
           </div>
         </div>
       </section>
