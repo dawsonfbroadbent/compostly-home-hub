@@ -25,10 +25,26 @@ interface FAQItem {
 // Data
 // ---------------------------------------------------------------------------
 const dropOffLocations = [
-  { name: "Green Earth Co-op", address: "142 Elm St", hours: "Mon–Sat, 8am–6pm" },
-  { name: "Riverside Community Garden", address: "890 River Rd", hours: "Daily, 7am–8pm" },
-  { name: "Northgate Farmers Market", address: "55 Market Pl", hours: "Sat only, 8am–1pm" },
-  { name: "Westside Library", address: "310 Oak Ave", hours: "Mon–Fri, 9am–5pm" },
+  {
+    name: "Green Earth Co-op",
+    address: "142 Elm St",
+    hours: "Mon–Sat, 8am–6pm",
+  },
+  {
+    name: "Riverside Community Garden",
+    address: "890 River Rd",
+    hours: "Daily, 7am–8pm",
+  },
+  {
+    name: "Northgate Farmers Market",
+    address: "55 Market Pl",
+    hours: "Sat only, 8am–1pm",
+  },
+  {
+    name: "Westside Library",
+    address: "310 Oak Ave",
+    hours: "Mon–Fri, 9am–5pm",
+  },
 ];
 
 const faqs: FAQItem[] = [
@@ -218,7 +234,10 @@ const Pickup = () => {
                         tip: "Lid must be fully closed & latched. Do not block sidewalks or fire hydrants.",
                       },
                     ].map((t) => (
-                      <div key={t.label} className="rounded-lg border bg-muted/40 p-3">
+                      <div
+                        key={t.label}
+                        className="rounded-lg border bg-muted/40 p-3"
+                      >
                         <p className="font-semibold mb-1">{t.label}</p>
                         <p className="text-muted-foreground">{t.tip}</p>
                       </div>
@@ -227,8 +246,11 @@ const Pickup = () => {
                   <div className="mt-4 flex items-start gap-2 rounded-lg bg-amber-50 border border-amber-200 px-4 py-3 text-sm">
                     <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
                     <p className="text-amber-800">
-                      <span className="font-semibold">Bins set out after 7:00 AM may be missed.</span>{" "}
-                      Our routes start early — set yours out the night before if you're not an early riser.
+                      <span className="font-semibold">
+                        Bins set out after 7:00 AM may be missed.
+                      </span>{" "}
+                      Our routes start early — set yours out the night before if
+                      you're not an early riser.
                     </p>
                   </div>
                 </div>
@@ -271,7 +293,9 @@ const Pickup = () => {
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
               <Navigation className="h-5 w-5 text-primary" />
             </div>
-            <h2 className="font-display text-3xl font-bold">Drop-Off Locations</h2>
+            <h2 className="font-display text-3xl font-bold">
+              Drop-Off Locations
+            </h2>
           </div>
           <p className="text-muted-foreground mb-10 ml-[52px]">
             Prefer to drop off yourself? Bring your sealed compostable bag to
@@ -291,8 +315,12 @@ const Pickup = () => {
                   </div>
                   <div>
                     <p className="font-semibold">{loc.name}</p>
-                    <p className="text-sm text-muted-foreground">{loc.address}</p>
-                    <p className="text-xs text-muted-foreground mt-1">🕐 {loc.hours}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {loc.address}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      🕐 {loc.hours}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -302,7 +330,9 @@ const Pickup = () => {
           <div className="mt-6 rounded-xl border bg-card p-5 text-sm">
             <p className="font-semibold mb-2">What to bring</p>
             <ul className="text-muted-foreground space-y-1 list-disc list-inside">
-              <li>Scraps sealed in a compostable liner bag (provided in your kit)</li>
+              <li>
+                Scraps sealed in a compostable liner bag (provided in your kit)
+              </li>
               <li>Your Compostly membership card — digital or physical</li>
               <li>No loose scraps; bins at partner locations are shared</li>
             </ul>
@@ -318,30 +348,15 @@ const Pickup = () => {
           </h2>
           <p className="text-center text-muted-foreground mb-10">
             Have a question not answered here?{" "}
-            <Link to="/contact" className="text-primary underline underline-offset-2">
+            <Link
+              to="/contact"
+              className="text-primary underline underline-offset-2"
+            >
               Reach out
             </Link>
             .
           </p>
           <FAQAccordion items={faqs} />
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="bg-primary py-16">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="font-display text-3xl font-bold text-primary-foreground mb-4">
-            Not a subscriber yet?
-          </h2>
-          <p className="text-primary-foreground/80 mb-8 max-w-md mx-auto">
-            Sign up and we'll ship your starter kit — bin, liners, and a full
-            guide — right to your door.
-          </p>
-          <Link to="/sign-up">
-            <Button size="lg" variant="secondary" className="gap-2">
-              Get Started <ArrowRight className="h-4 w-4" />
-            </Button>
-          </Link>
         </div>
       </section>
     </div>
