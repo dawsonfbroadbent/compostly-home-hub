@@ -1,6 +1,7 @@
 import aboutImage from "@/assets/about-hero-composting.png";
 import garrettHeadshot from "@/assets/headshot-garrett.jpg";
 import brocHeadshot from "@/assets/headshot-broc.jpeg";
+import ethanHeadshot from "@/assets/headshot-ethan.jpg";
 import { Leaf, Heart, TreePine } from "lucide-react";
 
 const AboutUs = () => (
@@ -84,9 +85,9 @@ const AboutUs = () => (
 
         <div className="grid gap-10 grid-cols-2 md:grid-cols-4 justify-items-center">
           {[
-            { name: "Garrett Nelson", role: "Investor | Advisor | PhD in Investing |", img: garrettHeadshot },
+            { name: "Garrett Nelson", role: "Investor | Advisor", img: garrettHeadshot },
             { name: "Logan Reeder", role: "CEO | Co-Founder" },
-            { name: "Ethan Housley", role: "CTO | Founder" },
+            { name: "Ethan Housley", role: "CTO | Founder", img: ethanHeadshot },
             { name: "Dawson Broadbent", role: "CMO" },
             { name: "Michael Jones", role: "CFO" },
             { name: "Garret Safsten", role: "CRO" },
