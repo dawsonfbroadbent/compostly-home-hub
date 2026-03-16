@@ -18,6 +18,7 @@ import Contact from "./pages/Contact";
 import WhatToCompost from "./pages/WhatToCompost";
 import NotFound from "./pages/NotFound";
 import ScrollToTop from "./pages/ScrollToTop";
+import PickupInstructions from "@/pages/PickupInstructions";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +45,7 @@ const App = () => (
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/what-to-compost" element={<WhatToCompost />} />
                 <Route path="*" element={<NotFound />} />
+                <Route path="/pickup" element={<PickupInstructions />} />
               </Routes>
             </main>
             <Footer />

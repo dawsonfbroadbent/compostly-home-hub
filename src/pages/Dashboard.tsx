@@ -33,6 +33,7 @@ const Dashboard = () => {
         <Link to="/pickup">
           <Button>Pickup Instructions</Button>
         </Link>
+        <br />
         <Tabs value={tab} onValueChange={setTab}>
           <TabsList className="mb-6">
             <TabsTrigger value="schedule" className="gap-2">
