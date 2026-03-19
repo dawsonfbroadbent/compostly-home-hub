@@ -100,7 +100,7 @@ const Index = () => {
                 Access to guides, tips, composting tracker, rebate tracking, a
                 complimentary bin and more.
               </p>
-              <Link to="/sign-up">
+              <Link to="/signup">
                 <Button className="w-full gap-2">
                   Get Started <ArrowRight className="h-4 w-4" />
                 </Button>
