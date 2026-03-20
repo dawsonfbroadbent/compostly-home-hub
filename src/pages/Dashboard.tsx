@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
-import { Calendar, DollarSign, MapPin } from "lucide-react";
+import { Calendar, DollarSign, MapPin, Leaf } from "lucide-react";
 import CompostMap from "@/components/CompostMap";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/context/AuthContext";
+import { supabase } from "@/lib/supabase";
 
 const scheduleData = [
   { day: "Monday", task: "Add greens (fruit/veggie scraps)", done: true },
@@ -23,8 +25,30 @@ const financeData = [
   { item: "Compost Thermometer", cost: 12, date: "Feb 2026" },
 ];
 
+type Rebate = {
+  rebate_id: number;
+  compost_weight: number | null;
+  rebate_amount: number | null;
+};
+
 const Dashboard = () => {
   const [tab, setTab] = useState("schedule");
+  const { user } = useAuth();
+  const [rebates, setRebates] = useState<Rebate[]>([]);
+  const [rebateLoading, setRebateLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user) return;
+    setRebateLoading(true);
+    supabase
+      .from("rebate")
+      .select("rebate_id, compost_weight, rebate_amount")
+      .eq("account_id", user.id)
+      .then(({ data, error }) => {
+        if (!error && data) setRebates(data as Rebate[]);
+        setRebateLoading(false);
+      });
+  }, [user]);
 
   return (
     <div className="min-h-screen py-10">
@@ -76,6 +100,50 @@ const Dashboard = () => {
           </TabsContent>
 
           <TabsContent value="finances">
+            <Card className="mb-6">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Leaf className="h-5 w-5 text-primary" /> Compost Rebates
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {rebateLoading ? (
+                  <p className="text-sm text-muted-foreground">Loading rebates…</p>
+                ) : rebates.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No rebates yet.</p>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b text-left text-muted-foreground">
+                          <th className="pb-2">Compost Weight (lbs)</th>
+                          <th className="pb-2">Rebate Amount</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {rebates.map((r) => (
+                          <tr key={r.rebate_id} className="border-b last:border-0">
+                            <td className="py-3">{r.compost_weight?.toFixed(1) ?? "—"}</td>
+                            <td className="py-3">${r.rebate_amount?.toFixed(2) ?? "—"}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                      <tfoot>
+                        <tr className="font-semibold">
+                          <td className="pt-3">
+                            {rebates.reduce((sum, r) => sum + (r.compost_weight ?? 0), 0).toFixed(1)} lbs
+                          </td>
+                          <td className="pt-3">
+                            ${rebates.reduce((sum, r) => sum + (r.rebate_amount ?? 0), 0).toFixed(2)}
+                          </td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
             <Card>
               <CardHeader>
                 <CardTitle>Composting Expenses</CardTitle>
