@@ -3,6 +3,7 @@ import garrettHeadshot from "@/assets/headshot-garrett.jpg";
 import brocHeadshot from "@/assets/headshot-broc.jpeg";
 import ethanHeadshot from "@/assets/headshot-ethan.jpg";
 import michaelHeadshot from "@/assets/headshot-michael.jpg";
+import dawsonHeadshot from "@/assets/headshot-dawson.jpg";
 import { Leaf, Heart, TreePine } from "lucide-react";
 
 const AboutUs = () => (
@@ -89,7 +90,7 @@ const AboutUs = () => (
             { name: "Garrett Nelson", role: "Investor | Analyst", img: garrettHeadshot },
             { name: "Logan Reeder", role: "CEO | Co-Founder" },
             { name: "Ethan Housley", role: "CTO | Founder", img: ethanHeadshot },
-            { name: "Dawson Broadbent", role: "CMO" },
+            { name: "Dawson Broadbent", role: "CMO", img: dawsonHeadshot },
             { name: "Michael Jones", role: "CFO", img: michaelHeadshot },
             { name: "Garret Safsten", role: "CRO" },
             { name: "Joaquin Elizalde ", role: "President | Co-Founder" },
