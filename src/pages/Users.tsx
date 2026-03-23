@@ -38,7 +38,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Trash2, Edit2, Plus, Loader2, ChevronUp, ChevronDown } from "lucide-react";
+import { Trash2, Edit2, Plus, Loader2, ChevronUp, ChevronDown, Users as UsersIcon } from "lucide-react";
 import { toast } from "sonner";
 import EditUserDialog, { type UserRecord } from "@/components/EditUserDialog";
 
@@ -488,6 +488,19 @@ const Users = () => {
             {error}
           </div>
         )}
+
+        {/* Total Users OKR */}
+        <div className="mb-6 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+              <UsersIcon className="h-6 w-6 text-green-700" />
+            </div>
+            <div>
+              <p className="text-sm font-medium text-gray-500">Total Users</p>
+              <p className="text-3xl font-bold text-gray-900">{users.length}</p>
+            </div>
+          </div>
+        </div>
 
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <Input
