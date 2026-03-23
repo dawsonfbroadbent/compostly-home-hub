@@ -75,13 +75,39 @@ const Dashboard = () => {
   const [isSchedulingPickup, setIsSchedulingPickup] = useState(false);
 
   const handleSchedulePickup = async () => {
-    if (!pickupDate) return;
-    setUpcomingPickups((prev) =>
-      [...prev, pickupDate].sort((a, b) => a.getTime() - b.getTime())
+    if (!pickupDate || !user) return;
+
+    setIsSchedulingPickup(true);
+
+    const pickupDateValue = toPickupDateValue(pickupDate);
+    const { data, error } = await supabase
+      .from("scheduled_pickup")
+      .insert({
+        account_id: user.id,
+        pickup_date: pickupDateValue,
+      })
+      .select("pickup_id, pickup_date")
+      .single();
+
+    setIsSchedulingPickup(false);
+
+    if (error || !data) {
+      toast.error("Unable to schedule pickup", {
+        description:
+          error?.code === "23505"
+            ? "You already have a pickup scheduled for that date."
+            : "Please try again.",
+      });
+      return;
+    }
+
+    const scheduledPickup = data as ScheduledPickup;
+    setScheduledPickups((prev) =>
+      sortScheduledPickups([...prev, scheduledPickup])
     );
     setIsPickupOpen(false);
     toast.success("Pickup Scheduled!", {
-      description: `Your pickup is scheduled for ${pickupDate.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}`,
+      description: `Your pickup is scheduled for ${formatPickupDateLabel(pickupDateValue)}`,
     });
     setPickupDate(undefined);
   };
@@ -194,13 +220,9 @@ const Dashboard = () => {
               <CalendarIcon className="h-5 w-5 text-primary" /> Upcoming Pickups
             </h3>
             <ul className="space-y-2 text-sm text-muted-foreground ml-7">
-              {upcomingPickups.map((d, i) => (
-                <li key={i} className="list-disc">
-                  {d.toLocaleDateString("en-US", {
-                    weekday: "long",
-                    month: "long",
-                    day: "numeric",
-                  })}
+              {scheduledPickups.map((pickup) => (
+                <li key={pickup.pickup_id} className="list-disc">
+                  {formatPickupDateLabel(pickup.pickup_date)}
                 </li>
               ))}
             </ul>
