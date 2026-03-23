@@ -4,6 +4,9 @@ import brocHeadshot from "@/assets/headshot-broc.jpeg";
 import ethanHeadshot from "@/assets/headshot-ethan.jpg";
 import michaelHeadshot from "@/assets/headshot-michael.jpg";
 import dawsonHeadshot from "@/assets/headshot-dawson.jpg";
+import loganHeadshot from "@/assets/headshot-logan.jpeg";
+import joaquinHeadshot from "@/assets/headshot-joaquin.jpg";
+import garretSafstenHeadshot from "@/assets/headshot-garretsafsten.jpg";
 import { Leaf, Heart, TreePine } from "lucide-react";
 
 const AboutUs = () => (
@@ -88,18 +91,18 @@ const AboutUs = () => (
         <div className="grid gap-10 grid-cols-2 md:grid-cols-4 justify-items-center">
           {[
             { name: "Garrett Nelson", role: "Investor | Analyst", img: garrettHeadshot },
-            { name: "Logan Reeder", role: "CEO | Co-Founder" },
+            { name: "Logan Reeder", role: "CEO | Co-Founder", img: loganHeadshot },
             { name: "Ethan Housley", role: "CTO | Founder", img: ethanHeadshot },
             { name: "Dawson Broadbent", role: "CMO", img: dawsonHeadshot },
             { name: "Michael Jones", role: "CFO", img: michaelHeadshot },
-            { name: "Garret Safsten", role: "CRO" },
-            { name: "Joaquin Elizalde ", role: "President | Co-Founder" },
+            { name: "Garret Safsten", role: "CRO", img: garretSafstenHeadshot, imgClass: "object-center scale-[1.3]" },
+            { name: "Joaquin Elizalde ", role: "President | Co-Founder", img: joaquinHeadshot },
             { name: "Broc Cuartas", role: "Investor | Advisor", img: brocHeadshot },
           ].map((member) => (
             <div key={member.name} className="flex flex-col items-center text-center group">
               <div className="w-32 h-32 rounded-full border-4 border-primary/30 bg-card overflow-hidden mb-4 shadow-md transition-transform group-hover:scale-105 group-hover:border-primary/60 flex items-center justify-center">
                 {member.img ? (
-                  <img src={member.img} alt={member.name} className="w-full h-full object-cover object-[center_20%]" />
+                  <img src={member.img} alt={member.name} className={`w-full h-full object-cover ${member.imgClass || "object-[center_20%]"}`} />
                 ) : (
                   <span className="text-3xl text-primary/50">🌱</span>
                 )}
