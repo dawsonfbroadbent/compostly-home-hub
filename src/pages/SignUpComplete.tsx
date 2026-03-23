@@ -20,7 +20,7 @@ const SignUpComplete = () => {
             </>
           )}
           {" "}
-          You're ready to start your composting journey!
+          You're now ready to start your composting journey!
         </p>
         <Link to="/what-to-compost">
           <Button className="gap-2">What to Compost →</Button>
