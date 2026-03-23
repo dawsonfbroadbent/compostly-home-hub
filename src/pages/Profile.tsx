@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { User, Pencil } from "lucide-react";
 import { toast } from "sonner";
+import AddressFields, { type AddressValue, validateAddress, addressToDisplayString } from "@/components/AddressFields";
 
 const Profile = () => {
   const { isLoggedIn, user, updateUser, logout } = useAuth();
@@ -36,11 +37,16 @@ const Profile = () => {
     lastName: user?.last_name ?? "",
     email: user?.email ?? "",
     pickupOrDropoff: user?.pickup_or_dropoff ?? "",
-    address: user?.address ?? "",
     emailNotifications: user?.email_notifications ?? true,
     weeklyReminders: user?.weekly_reminders ?? true,
     newPassword: "",
     confirmPassword: "",
+  });
+  const [address, setAddress] = useState<AddressValue>({
+    street_address: user?.street_address ?? "",
+    city: user?.city ?? "",
+    state: user?.state ?? "",
+    zip_code: user?.zip_code ?? "",
   });
 
   if (!isLoggedIn || !user) {
@@ -61,11 +67,16 @@ const Profile = () => {
       lastName: user.last_name,
       email: user.email,
       pickupOrDropoff: user.pickup_or_dropoff ?? "",
-      address: user.address ?? "",
       emailNotifications: user.email_notifications,
       weeklyReminders: user.weekly_reminders,
       newPassword: "",
       confirmPassword: "",
+    });
+    setAddress({
+      street_address: user.street_address ?? "",
+      city: user.city ?? "",
+      state: user.state ?? "",
+      zip_code: user.zip_code ?? "",
     });
     setError("");
     setIsEditing(false);
@@ -86,9 +97,9 @@ const Profile = () => {
       setError("Please select pickup or dropoff.");
       return;
     }
-    if (form.pickupOrDropoff === "Pickup" && !form.address.trim()) {
-      setError("Address is required for pickup.");
-      return;
+    if (form.pickupOrDropoff === "Pickup") {
+      const addrError = validateAddress(address, true);
+      if (addrError) { setError(addrError); return; }
     }
     if (form.newPassword && form.newPassword.length < 6) {
       setError("Password must be at least 6 characters.");
@@ -106,12 +117,16 @@ const Profile = () => {
 
     setIsSaving(true);
     try {
+      const hasAddress = address.street_address.trim() || address.city.trim() || address.state || address.zip_code.trim();
       const updates: Record<string, unknown> = {
         first_name: form.firstName.trim(),
         last_name: form.lastName.trim(),
         email: form.email.trim(),
         pickup_or_dropoff: form.pickupOrDropoff,
-        address: form.pickupOrDropoff === "Pickup" ? form.address.trim() : null,
+        street_address: hasAddress ? address.street_address.trim() : null,
+        city: hasAddress ? address.city.trim() : null,
+        state: hasAddress ? address.state : null,
+        zip_code: hasAddress ? address.zip_code.trim() : null,
         email_notifications: form.emailNotifications,
         weekly_reminders: form.weeklyReminders,
       };
@@ -124,7 +139,7 @@ const Profile = () => {
         .from("user_account")
         .update(updates)
         .eq("user_id", user.id)
-        .select("user_id, first_name, last_name, email, address, pickup_or_dropoff, email_notifications, weekly_reminders");
+        .select("user_id, first_name, last_name, email, street_address, city, state, zip_code, pickup_or_dropoff, email_notifications, weekly_reminders");
 
       if (updateError) {
         if (updateError.code === "23505") {
@@ -143,7 +158,10 @@ const Profile = () => {
         first_name: row.first_name,
         last_name: row.last_name,
         email: row.email,
-        address: row.address,
+        street_address: row.street_address,
+        city: row.city,
+        state: row.state,
+        zip_code: row.zip_code,
         pickup_or_dropoff: row.pickup_or_dropoff,
         email_notifications: row.email_notifications ?? true,
         weekly_reminders: row.weekly_reminders ?? true,
@@ -234,7 +252,7 @@ const Profile = () => {
                   <Select
                     value={form.pickupOrDropoff}
                     onValueChange={(value) =>
-                      setForm({ ...form, pickupOrDropoff: value, address: value === "Pickup" ? form.address : "" })
+                      setForm({ ...form, pickupOrDropoff: value })
                     }
                   >
                     <SelectTrigger id="pickupOrDropoff">
@@ -248,13 +266,8 @@ const Profile = () => {
                 </div>
                 {form.pickupOrDropoff === "Pickup" && (
                   <div>
-                    <Label htmlFor="address">Pickup Address</Label>
-                    <Input
-                      id="address"
-                      value={form.address}
-                      onChange={(e) => setForm({ ...form, address: e.target.value })}
-                      placeholder="123 Main St, City, State"
-                    />
+                    <Label className="mb-2 block">Pickup Address <span className="text-destructive">*</span></Label>
+                    <AddressFields value={address} onChange={setAddress} required idPrefix="profile" />
                   </div>
                 )}
                 <div>
@@ -286,7 +299,7 @@ const Profile = () => {
                 <div><Label>Email</Label><Input value={user.email} readOnly /></div>
                 <div><Label>Service Type</Label><Input value={user.pickup_or_dropoff ?? ""} readOnly /></div>
                 {user.pickup_or_dropoff === "Pickup" && (
-                  <div><Label>Address</Label><Input value={user.address ?? ""} readOnly /></div>
+                  <div><Label>Address</Label><Input value={addressToDisplayString({ street_address: user.street_address ?? "", city: user.city ?? "", state: user.state ?? "", zip_code: user.zip_code ?? "" })} readOnly /></div>
                 )}
               </>
             )}

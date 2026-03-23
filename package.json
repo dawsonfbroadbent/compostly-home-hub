@@ -8,6 +8,8 @@
     "build": "node scripts/build.mjs",
     "build:app": "vite build",
     "build:dev": "vite build --mode development",
+    "db:up": "supabase start",
+    "db:down": "supabase stop",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",

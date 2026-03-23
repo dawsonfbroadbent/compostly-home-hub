@@ -6,6 +6,7 @@ import { geocodeAddress, isCached } from "@/lib/geocode";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import EditUserDialog, { type UserRecord } from "@/components/EditUserDialog";
+import { addressToDisplayString } from "@/components/AddressFields";
 
 interface UserWithCoords extends UserRecord {
   lat: number;
@@ -40,7 +41,7 @@ const MapPage = () => {
       const { data, error } = await supabase
         .from("user_account")
         .select(
-          "user_id, first_name, last_name, email, address, pickup_or_dropoff, email_notifications, weekly_reminders",
+          "user_id, first_name, last_name, email, street_address, city, state, zip_code, pickup_or_dropoff, email_notifications, weekly_reminders",
         )
         .order("user_id", { ascending: true });
 
@@ -61,7 +62,7 @@ const MapPage = () => {
 
   // Geocode user addresses (respects Nominatim 1 req/s rate limit)
   useEffect(() => {
-    const usersWithAddress = users.filter((u) => u.address?.trim());
+    const usersWithAddress = users.filter((u) => u.street_address?.trim());
     if (usersWithAddress.length === 0) {
       setGeocodedUsers([]);
       setGeocoding(false);
@@ -79,8 +80,14 @@ const MapPage = () => {
         if (cancelled) return;
 
         const user = usersWithAddress[i];
-        const wasCached = isCached(user.address!);
-        const coords = await geocodeAddress(user.address!);
+        const fullAddress = addressToDisplayString({
+          street_address: user.street_address ?? "",
+          city: user.city ?? "",
+          state: user.state ?? "",
+          zip_code: user.zip_code ?? "",
+        });
+        const wasCached = isCached(fullAddress);
+        const coords = await geocodeAddress(fullAddress);
 
         if (coords) {
           results.push({ ...user, lat: coords.lat, lng: coords.lng });
@@ -143,7 +150,12 @@ const MapPage = () => {
 
     geocodedUsers.forEach((user) => {
       const name = escapeHtml(`${user.first_name} ${user.last_name}`);
-      const addr = escapeHtml(user.address ?? "");
+      const addr = escapeHtml(addressToDisplayString({
+        street_address: user.street_address ?? "",
+        city: user.city ?? "",
+        state: user.state ?? "",
+        zip_code: user.zip_code ?? "",
+      }));
 
       L.marker([user.lat, user.lng], { icon })
         .bindPopup(
@@ -192,7 +204,7 @@ const MapPage = () => {
     fetchUsers();
   }, [fetchUsers]);
 
-  const usersWithAddress = users.filter((u) => u.address?.trim());
+  const usersWithAddress = users.filter((u) => u.street_address?.trim());
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-8 sm:px-6 lg:px-8">

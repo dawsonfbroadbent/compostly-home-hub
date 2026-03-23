@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import compostlyLogo from "@/assets/compostly-logo.png";
 
 const Footer = () => (
-  <footer className="border-t bg-card py-10">
+  <footer className="border-t bg-white py-10">
     <div className="container mx-auto px-4">
       <div className="grid gap-8 md:grid-cols-3">
         <div>

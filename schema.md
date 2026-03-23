@@ -51,7 +51,10 @@ This is the only table actively used by the website backend today.
 | `email` | `VARCHAR(255)` | Not null, unique | Used for login |
 | `password` | `VARCHAR(255)` | Not null | Stores a bcrypt hash |
 | `pickup_or_dropoff` | `VARCHAR(50)` | Nullable | Current UI uses `Pickup` or `Dropoff` |
-| `address` | `TEXT` | Nullable | Required by the frontend only when service type is `Pickup` |
+| `street_address` | `VARCHAR(255)` | Nullable | Street address; required when service type is `Pickup` |
+| `city` | `VARCHAR(100)` | Nullable | City name; required when service type is `Pickup` |
+| `state` | `VARCHAR(2)` | Nullable | US state abbreviation (e.g. `UT`); required when service type is `Pickup` |
+| `zip_code` | `VARCHAR(10)` | Nullable | ZIP or ZIP+4 format; required when service type is `Pickup` |
 | `region_id` | `INT` | Nullable, foreign key to `region(region_id)` | Present in ERD and SQL, not currently written by the API |
 
 ### 3. `pickup_time`

@@ -12,7 +12,7 @@ const mockUseAuth = vi.mocked((await import("@/context/AuthContext")).useAuth);
 function renderNavbar(isLoggedIn: boolean) {
   mockUseAuth.mockReturnValue({
     isLoggedIn,
-    user: isLoggedIn ? { id: 1, first_name: "Test", last_name: "User", email: "test@test.com", address: null, pickup_or_dropoff: null } : null,
+    user: isLoggedIn ? { id: 1, first_name: "Test", last_name: "User", email: "test@test.com", street_address: null, city: null, state: null, zip_code: null, pickup_or_dropoff: null, email_notifications: true, weekly_reminders: true } : null,
     login: vi.fn(),
     setAuthenticatedUser: vi.fn(),
     logout: vi.fn(),

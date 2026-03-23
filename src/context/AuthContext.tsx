@@ -8,7 +8,10 @@ export type User = {
   first_name: string;
   last_name: string;
   email: string;
-  address: string | null;
+  street_address: string | null;
+  city: string | null;
+  state: string | null;
+  zip_code: string | null;
   pickup_or_dropoff: string | null;
   email_notifications: boolean;
   weekly_reminders: boolean;
@@ -33,7 +36,10 @@ function loadSession(): User | null {
       first_name: parsed.first_name ?? "",
       last_name: parsed.last_name ?? "",
       email: parsed.email,
-      address: parsed.address ?? null,
+      street_address: parsed.street_address ?? null,
+      city: parsed.city ?? null,
+      state: parsed.state ?? null,
+      zip_code: parsed.zip_code ?? null,
       pickup_or_dropoff: parsed.pickup_or_dropoff ?? null,
       email_notifications: parsed.email_notifications ?? true,
       weekly_reminders: parsed.weekly_reminders ?? true,
@@ -91,7 +97,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = useCallback(async (email: string, password: string) => {
     const { data, error } = await supabase
       .from("user_account")
-      .select("user_id, first_name, last_name, email, address, pickup_or_dropoff, password, email_notifications, weekly_reminders")
+      .select("user_id, first_name, last_name, email, street_address, city, state, zip_code, pickup_or_dropoff, password, email_notifications, weekly_reminders")
       .eq("email", email)
       .single();
 
@@ -108,7 +114,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       first_name: data.first_name,
       last_name: data.last_name,
       email: data.email,
-      address: data.address,
+      street_address: data.street_address,
+      city: data.city,
+      state: data.state,
+      zip_code: data.zip_code,
       pickup_or_dropoff: data.pickup_or_dropoff,
       email_notifications: data.email_notifications ?? true,
       weekly_reminders: data.weekly_reminders ?? true,

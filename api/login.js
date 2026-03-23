@@ -1,7 +1,11 @@
 import { getPool } from "./_db.js";
-import { parseBody, comparePassword, userPayload } from "./_auth.js";
+import { parseBody, comparePassword, userPayload, setCorsHeaders, handlePreflight } from "./_auth.js";
 
 export default async function handler(req, res) {
+  setCorsHeaders(res);
+  const preflight = handlePreflight(req, res);
+  if (preflight) return;
+
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ message: "Method not allowed." });
@@ -19,7 +23,7 @@ export default async function handler(req, res) {
     const pool = getPool();
 
     const result = await pool.query(
-      `SELECT user_id, first_name, last_name, email, password, address, pickup_or_dropoff
+      `SELECT user_id, first_name, last_name, email, password, street_address, city, state, zip_code, pickup_or_dropoff
        FROM user_account
        WHERE email = $1`,
       [email.trim().toLowerCase()]

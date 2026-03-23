@@ -20,13 +20,17 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import AddressFields, { type AddressValue, validateAddress } from "@/components/AddressFields";
 
 export interface UserRecord {
   user_id: number;
   first_name: string;
   last_name: string;
   email: string;
-  address: string | null;
+  street_address: string | null;
+  city: string | null;
+  state: string | null;
+  zip_code: string | null;
   pickup_or_dropoff: string | null;
   email_notifications: boolean;
   weekly_reminders: boolean;
@@ -49,11 +53,11 @@ const EditUserDialog = ({
     firstName: "",
     lastName: "",
     email: "",
-    address: "",
     pickupOrDropoff: "",
     emailNotifications: true,
     weeklyReminders: true,
   });
+  const [address, setAddress] = useState<AddressValue>({ street_address: "", city: "", state: "", zip_code: "" });
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -63,10 +67,15 @@ const EditUserDialog = ({
         firstName: user.first_name,
         lastName: user.last_name,
         email: user.email,
-        address: user.address || "",
         pickupOrDropoff: user.pickup_or_dropoff || "",
         emailNotifications: user.email_notifications,
         weeklyReminders: user.weekly_reminders,
+      });
+      setAddress({
+        street_address: user.street_address || "",
+        city: user.city || "",
+        state: user.state || "",
+        zip_code: user.zip_code || "",
       });
       setError("");
     }
@@ -83,15 +92,26 @@ const EditUserDialog = ({
       return;
     }
 
+    const addrRequired = form.pickupOrDropoff === "Pickup";
+    const addrError = validateAddress(address, addrRequired);
+    if (addrError) {
+      setError(addrError);
+      return;
+    }
+
     setIsSubmitting(true);
     try {
+      const hasAddress = address.street_address.trim() || address.city.trim() || address.state || address.zip_code.trim();
       const { error: updateError } = await supabase
         .from("user_account")
         .update({
           first_name: form.firstName,
           last_name: form.lastName,
           email: form.email,
-          address: form.address || null,
+          street_address: hasAddress ? address.street_address.trim() : null,
+          city: hasAddress ? address.city.trim() : null,
+          state: hasAddress ? address.state : null,
+          zip_code: hasAddress ? address.zip_code.trim() : null,
           pickup_or_dropoff: form.pickupOrDropoff || null,
           email_notifications: form.emailNotifications,
           weekly_reminders: form.weeklyReminders,
@@ -184,28 +204,16 @@ const EditUserDialog = ({
               </SelectContent>
             </Select>
           </div>
-          {form.pickupOrDropoff === "Pickup" && (
+          {(form.pickupOrDropoff === "Pickup" || form.pickupOrDropoff === "Dropoff") && (
             <div>
-              <Label htmlFor="edit-address">Address *</Label>
-              <Input
-                id="edit-address"
-                value={form.address}
-                onChange={(e) =>
-                  setForm({ ...form, address: e.target.value })
-                }
-                placeholder="Required for pickup"
-              />
-            </div>
-          )}
-          {form.pickupOrDropoff === "Dropoff" && (
-            <div>
-              <Label htmlFor="edit-address">Address</Label>
-              <Input
-                id="edit-address"
-                value={form.address}
-                onChange={(e) =>
-                  setForm({ ...form, address: e.target.value })
-                }
+              <Label className="mb-2 block">
+                Address {form.pickupOrDropoff === "Pickup" && <span className="text-destructive">*</span>}
+              </Label>
+              <AddressFields
+                value={address}
+                onChange={setAddress}
+                required={form.pickupOrDropoff === "Pickup"}
+                idPrefix="edit-addr"
               />
             </div>
           )}
