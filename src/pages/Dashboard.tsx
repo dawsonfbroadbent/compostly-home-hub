@@ -56,7 +56,7 @@ const sortScheduledPickups = (pickups: ScheduledPickup[]) =>
 const Dashboard = () => {
   const [tab, setTab] = useState("schedule");
   const { user } = useAuth();
-  const isPickupUser = user?.pickup_or_dropoff === "pickup";
+  const isPickupUser = user?.pickup_or_dropoff === "Pickup";
   const [rebates, setRebates] = useState<Rebate[]>([]);
   const [rebateLoading, setRebateLoading] = useState(true);
   const [pickupDate, setPickupDate] = useState<Date | undefined>();
