@@ -11,7 +11,7 @@ dotenv.config({ path: path.resolve(__dirname, "../.env") });
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors({ origin: true }));
+app.use(cors({ origin: process.env.ALLOWED_ORIGIN || "http://localhost:8080" }));
 app.use(express.json());
 
 app.use("/api", signupRouter);

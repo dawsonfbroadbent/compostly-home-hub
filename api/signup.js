@@ -1,13 +1,17 @@
 import { getPool } from "./_db.js";
-import { parseBody, hashPassword, userPayload } from "./_auth.js";
+import { parseBody, hashPassword, userPayload, setCorsHeaders, handlePreflight } from "./_auth.js";
 
 export default async function handler(req, res) {
+  setCorsHeaders(res);
+  const preflight = handlePreflight(req, res);
+  if (preflight) return;
+
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ message: "Method not allowed." });
   }
 
-  const { firstName, lastName, email, password, address, pickupOrDropoff } =
+  const { firstName, lastName, email, password, streetAddress, city, state, zipCode, pickupOrDropoff } =
     parseBody(req);
 
   if (!firstName?.trim() || !lastName?.trim() || !email?.trim() || !password) {
@@ -22,20 +26,38 @@ export default async function handler(req, res) {
     });
   }
 
+  if (pickupOrDropoff === "Pickup") {
+    if (!streetAddress?.trim() || !city?.trim() || !state?.trim() || !zipCode?.trim()) {
+      return res.status(400).json({
+        message: "Street address, city, state, and ZIP code are required for pickup.",
+      });
+    }
+    if (!/^\d{5}(-\d{4})?$/.test(zipCode.trim())) {
+      return res.status(400).json({
+        message: "ZIP code must be 5 digits or ZIP+4 format.",
+      });
+    }
+  }
+
   try {
     const hashedPassword = await hashPassword(password);
     const pool = getPool();
 
+    const hasAddress = streetAddress?.trim() || city?.trim() || state?.trim() || zipCode?.trim();
+
     const result = await pool.query(
-      `INSERT INTO user_account (first_name, last_name, email, password, address, pickup_or_dropoff)
-       VALUES ($1, $2, $3, $4, $5, $6)
-       RETURNING user_id, first_name, last_name, email, address, pickup_or_dropoff`,
+      `INSERT INTO user_account (first_name, last_name, email, password, street_address, city, state, zip_code, pickup_or_dropoff)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+       RETURNING user_id, first_name, last_name, email, street_address, city, state, zip_code, pickup_or_dropoff`,
       [
         firstName.trim(),
         lastName.trim(),
         email.trim().toLowerCase(),
         hashedPassword,
-        address?.trim() || null,
+        hasAddress ? streetAddress.trim() : null,
+        hasAddress ? city.trim() : null,
+        hasAddress ? state.trim() : null,
+        hasAddress ? zipCode.trim() : null,
         pickupOrDropoff?.trim() || null,
       ]
     );

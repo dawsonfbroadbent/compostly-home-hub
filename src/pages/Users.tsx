@@ -41,7 +41,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Trash2, Edit2, Plus, Loader2, ChevronUp, ChevronDown, Users as UsersIcon } from "lucide-react";
 import { toast } from "sonner";
 import EditUserDialog, { type UserRecord } from "@/components/EditUserDialog";
-import AdminSubNav from "@/components/AdminSubNav";
+import AddressFields, { type AddressValue, validateAddress, addressToDisplayString } from "@/components/AddressFields";
 
 type User = UserRecord;
 
@@ -72,11 +72,11 @@ const Users = () => {
     lastName: "",
     email: "",
     password: "",
-    address: "",
     pickupOrDropoff: "",
     emailNotifications: true,
     weeklyReminders: true,
   });
+  const [address, setAddress] = useState<AddressValue>({ street_address: "", city: "", state: "", zip_code: "" });
 
   // Fetch all users
   const fetchUsers = async () => {
@@ -177,11 +177,11 @@ const Users = () => {
       lastName: "",
       email: "",
       password: "",
-      address: "",
       pickupOrDropoff: "",
       emailNotifications: true,
       weeklyReminders: true,
     });
+    setAddress({ street_address: "", city: "", state: "", zip_code: "" });
     setEditingUser(null);
   };
 
@@ -205,13 +205,17 @@ const Users = () => {
       return;
     }
 
-    if (form.pickupOrDropoff === "Pickup" && !form.address.trim()) {
-      setError("Address is required for pickup");
-      return;
+    if (form.pickupOrDropoff === "Pickup") {
+      const addrError = validateAddress(address, true);
+      if (addrError) {
+        setError(addrError);
+        return;
+      }
     }
 
     setIsSubmitting(true);
     try {
+      const hasAddress = address.street_address.trim() || address.city.trim() || address.state || address.zip_code.trim();
       const { error: insertError } = await supabase
         .from("user_account")
         .insert({
@@ -219,7 +223,10 @@ const Users = () => {
           last_name: form.lastName,
           email: form.email,
           password: form.password,
-          address: form.address || null,
+          street_address: hasAddress ? address.street_address.trim() : null,
+          city: hasAddress ? address.city.trim() : null,
+          state: hasAddress ? address.state : null,
+          zip_code: hasAddress ? address.zip_code.trim() : null,
           pickup_or_dropoff: form.pickupOrDropoff || null,
           email_notifications: form.emailNotifications,
           weekly_reminders: form.weeklyReminders,
@@ -420,27 +427,14 @@ const Users = () => {
                 </div>
                 {form.pickupOrDropoff === "Pickup" && (
                   <div>
-                    <Label htmlFor="create-address">Address *</Label>
-                    <Input
-                      id="create-address"
-                      value={form.address}
-                      onChange={(e) =>
-                        setForm({ ...form, address: e.target.value })
-                      }
-                      placeholder="Required for pickup"
-                    />
+                    <Label className="mb-2 block">Address <span className="text-destructive">*</span></Label>
+                    <AddressFields value={address} onChange={setAddress} required idPrefix="create-addr" />
                   </div>
                 )}
                 {form.pickupOrDropoff === "Dropoff" && (
                   <div>
-                    <Label htmlFor="create-address">Address</Label>
-                    <Input
-                      id="create-address"
-                      value={form.address}
-                      onChange={(e) =>
-                        setForm({ ...form, address: e.target.value })
-                      }
-                    />
+                    <Label className="mb-2 block">Address</Label>
+                    <AddressFields value={address} onChange={setAddress} idPrefix="create-addr" />
                   </div>
                 )}
                 <div className="flex items-center justify-between">
@@ -605,7 +599,7 @@ const Users = () => {
                     </TableCell>
                     <TableCell className="text-sm">{user.email}</TableCell>
                     <TableCell className="text-sm">
-                      {user.address || "—"}
+                      {user.street_address ? addressToDisplayString({ street_address: user.street_address ?? "", city: user.city ?? "", state: user.state ?? "", zip_code: user.zip_code ?? "" }) : "—"}
                     </TableCell>
                     <TableCell className="text-center text-sm">
                       {user.pickup_or_dropoff || "—"}

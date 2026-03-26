@@ -6,7 +6,7 @@ const router = Router();
 
 router.post("/signup", async (req, res) => {
   const pool = getPool();
-  const { firstName, lastName, email, password, address, pickupOrDropoff } = req.body || {};
+  const { firstName, lastName, email, password, streetAddress, city, state, zipCode, pickupOrDropoff } = req.body || {};
 
   if (!firstName?.trim() || !lastName?.trim() || !email?.trim() || !password) {
     return res.status(400).json({
@@ -20,14 +20,31 @@ router.post("/signup", async (req, res) => {
     });
   }
 
+  if (pickupOrDropoff === "Pickup") {
+    if (!streetAddress?.trim() || !city?.trim() || !state?.trim() || !zipCode?.trim()) {
+      return res.status(400).json({
+        message: "Street address, city, state, and ZIP code are required for pickup.",
+      });
+    }
+    if (!/^\d{5}(-\d{4})?$/.test(zipCode.trim())) {
+      return res.status(400).json({
+        message: "ZIP code must be 5 digits or ZIP+4 format.",
+      });
+    }
+  }
+
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
+    const hasAddress = streetAddress?.trim() || city?.trim() || state?.trim() || zipCode?.trim();
 
     const result = await pool.query(
-      `INSERT INTO user_account (first_name, last_name, email, password, address, pickup_or_dropoff)
-       VALUES ($1, $2, $3, $4, $5, $6)
-       RETURNING user_id, first_name, last_name, email, address, pickup_or_dropoff`,
-      [firstName.trim(), lastName.trim(), email.trim().toLowerCase(), hashedPassword, address?.trim() || null, pickupOrDropoff?.trim() || null]
+      `INSERT INTO user_account (first_name, last_name, email, password, street_address, city, state, zip_code, pickup_or_dropoff)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+       RETURNING user_id, first_name, last_name, email, street_address, city, state, zip_code, pickup_or_dropoff`,
+      [firstName.trim(), lastName.trim(), email.trim().toLowerCase(), hashedPassword,
+       hasAddress ? streetAddress.trim() : null, hasAddress ? city.trim() : null,
+       hasAddress ? state.trim() : null, hasAddress ? zipCode.trim() : null,
+       pickupOrDropoff?.trim() || null]
     );
 
     const row = result.rows[0];
@@ -36,7 +53,10 @@ router.post("/signup", async (req, res) => {
       first_name: row.first_name,
       last_name: row.last_name,
       email: row.email,
-      address: row.address,
+      street_address: row.street_address,
+      city: row.city,
+      state: row.state,
+      zip_code: row.zip_code,
       pickup_or_dropoff: row.pickup_or_dropoff,
     };
 
@@ -62,7 +82,7 @@ router.post("/login", async (req, res) => {
 
   try {
     const result = await pool.query(
-      `SELECT user_id, first_name, last_name, email, password, address, pickup_or_dropoff
+      `SELECT user_id, first_name, last_name, email, password, street_address, city, state, zip_code, pickup_or_dropoff
        FROM user_account
        WHERE email = $1`,
       [email.trim().toLowerCase()]
@@ -86,7 +106,10 @@ router.post("/login", async (req, res) => {
         first_name: user.first_name,
         last_name: user.last_name,
         email: user.email,
-        address: user.address,
+        street_address: user.street_address,
+        city: user.city,
+        state: user.state,
+        zip_code: user.zip_code,
         pickup_or_dropoff: user.pickup_or_dropoff
       }
     });
