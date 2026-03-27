@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS public.user_account (
   region_id integer,
   email_notifications boolean NOT NULL DEFAULT true,
   weekly_reminders boolean NOT NULL DEFAULT true,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
   CONSTRAINT user_account_pkey PRIMARY KEY (user_id)
 );
 
