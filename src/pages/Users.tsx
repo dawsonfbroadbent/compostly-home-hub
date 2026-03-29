@@ -38,10 +38,11 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Trash2, Edit2, Plus, Loader2, ChevronUp, ChevronDown, Users as UsersIcon } from "lucide-react";
+import { Trash2, Edit2, Plus, Loader2, ChevronUp, ChevronDown, Users as UsersIcon, CalendarCheck } from "lucide-react";
 import { toast } from "sonner";
 import EditUserDialog, { type UserRecord } from "@/components/EditUserDialog";
 import AddressFields, { type AddressValue, validateAddress, addressToDisplayString } from "@/components/AddressFields";
+import AdminSubNav from "@/components/AdminSubNav";
 
 type User = UserRecord;
 
@@ -63,6 +64,7 @@ const Users = () => {
   const [isBulkDeleteDialogOpen, setIsBulkDeleteDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [pickupOkr, setPickupOkr] = useState<{ percentage: number; scheduled: number; total: number } | null>(null);
 
   const itemsPerPage = 10;
 
@@ -99,8 +101,52 @@ const Users = () => {
     }
   };
 
+  // Fetch the pickup OKR: % of pickup users who scheduled within 2 weeks of account creation
+  const fetchPickupOkr = async () => {
+    try {
+      // Get all pickup users with their created_at
+      const { data: pickupUsers, error: usersErr } = await supabase
+        .from("user_account")
+        .select("user_id, created_at")
+        .eq("pickup_or_dropoff", "Pickup");
+
+      if (usersErr) throw usersErr;
+      if (!pickupUsers || pickupUsers.length === 0) {
+        setPickupOkr({ percentage: 0, scheduled: 0, total: 0 });
+        return;
+      }
+
+      // Get all scheduled pickups
+      const { data: pickups, error: pickupsErr } = await supabase
+        .from("scheduled_pickup")
+        .select("account_id, created_at");
+
+      if (pickupsErr) throw pickupsErr;
+
+      const twoWeeksMs = 14 * 24 * 60 * 60 * 1000;
+      let scheduledCount = 0;
+
+      for (const user of pickupUsers) {
+        const accountCreated = new Date(user.created_at).getTime();
+        const hasEarlyPickup = (pickups || []).some((p) => {
+          if (p.account_id !== user.user_id) return false;
+          const pickupCreated = new Date(p.created_at).getTime();
+          return pickupCreated - accountCreated <= twoWeeksMs;
+        });
+        if (hasEarlyPickup) scheduledCount++;
+      }
+
+      const pct = Math.round((scheduledCount / pickupUsers.length) * 100);
+      setPickupOkr({ percentage: pct, scheduled: scheduledCount, total: pickupUsers.length });
+    } catch {
+      // Silently fail — OKR is non-critical
+      setPickupOkr(null);
+    }
+  };
+
   useEffect(() => {
     fetchUsers();
+    fetchPickupOkr();
   }, []);
 
   // Filter users by search term
@@ -243,6 +289,7 @@ const Users = () => {
       setIsCreateDialogOpen(false);
       resetForm();
       fetchUsers();
+      fetchPickupOkr();
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to create user";
       setError(message);
@@ -269,6 +316,7 @@ const Users = () => {
       setIsDeleteDialogOpen(false);
       resetForm();
       fetchUsers();
+      fetchPickupOkr();
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to delete user";
       toast.error("Failed to delete user: " + message);
@@ -297,6 +345,7 @@ const Users = () => {
       setIsBulkDeleteDialogOpen(false);
       setSelectedUsers(new Set());
       fetchUsers();
+      fetchPickupOkr();
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to delete users";
       toast.error("Failed to delete users: " + message);
@@ -486,15 +535,40 @@ const Users = () => {
           </div>
         )}
 
-        {/* Total Users OKR */}
-        <div className="mb-6 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-          <div className="flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-              <UsersIcon className="h-6 w-6 text-green-700" />
+        {/* OKR Cards */}
+        <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+            <div className="flex items-center gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+                <UsersIcon className="h-6 w-6 text-green-700" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-500">Total Users</p>
+                <p className="text-3xl font-bold text-gray-900">{users.length}</p>
+              </div>
             </div>
-            <div>
-              <p className="text-sm font-medium text-gray-500">Total Users</p>
-              <p className="text-3xl font-bold text-gray-900">{users.length}</p>
+          </div>
+
+          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+            <div className="flex items-center gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
+                <CalendarCheck className="h-6 w-6 text-blue-700" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-500">
+                  Pickup Scheduled Within 2 Weeks
+                </p>
+                {pickupOkr ? (
+                  <>
+                    <p className="text-3xl font-bold text-gray-900">{pickupOkr.percentage}%</p>
+                    <p className="text-xs text-gray-400">
+                      {pickupOkr.scheduled} of {pickupOkr.total} pickup users
+                    </p>
+                  </>
+                ) : (
+                  <p className="text-sm text-gray-400">Loading...</p>
+                )}
+              </div>
             </div>
           </div>
         </div>
