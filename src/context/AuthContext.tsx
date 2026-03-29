@@ -3,6 +3,14 @@ import { supabase } from "@/lib/supabase";
 
 const SESSION_KEY = "user_account_session";
 
+const normalizeServiceType = (value: string | null | undefined): string | null => {
+  if (!value) return null;
+  const normalized = value.toLowerCase();
+  if (normalized === "pickup") return "Pickup";
+  if (normalized === "dropoff") return "Dropoff";
+  return value;
+};
+
 export type User = {
   id: number;
   first_name: string;
@@ -40,7 +48,7 @@ function loadSession(): User | null {
       city: parsed.city ?? null,
       state: parsed.state ?? null,
       zip_code: parsed.zip_code ?? null,
-      pickup_or_dropoff: parsed.pickup_or_dropoff ?? null,
+      pickup_or_dropoff: normalizeServiceType(parsed.pickup_or_dropoff),
       email_notifications: parsed.email_notifications ?? true,
       weekly_reminders: parsed.weekly_reminders ?? true,
     };
@@ -118,7 +126,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       city: data.city,
       state: data.state,
       zip_code: data.zip_code,
-      pickup_or_dropoff: data.pickup_or_dropoff,
+      pickup_or_dropoff: normalizeServiceType(data.pickup_or_dropoff),
       email_notifications: data.email_notifications ?? true,
       weekly_reminders: data.weekly_reminders ?? true,
     };

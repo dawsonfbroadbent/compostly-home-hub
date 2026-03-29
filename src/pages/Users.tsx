@@ -49,6 +49,14 @@ type User = UserRecord;
 type SortField = "first_name" | "last_name" | "email" | null;
 type SortDirection = "asc" | "desc";
 
+const normalizeServiceType = (value: string | null | undefined): string | null => {
+  if (!value) return null;
+  const normalized = value.toLowerCase();
+  if (normalized === "pickup") return "Pickup";
+  if (normalized === "dropoff") return "Dropoff";
+  return value;
+};
+
 const Users = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -91,7 +99,12 @@ const Users = () => {
         .order("user_id", { ascending: true });
 
       if (fetchError) throw fetchError;
-      setUsers(data || []);
+      setUsers(
+        (data || []).map((u) => ({
+          ...u,
+          pickup_or_dropoff: normalizeServiceType(u.pickup_or_dropoff),
+        }))
+      );
     } catch (err) {
       const message = err instanceof Error ? err.message : "Failed to fetch users";
       setError(message);
@@ -108,7 +121,7 @@ const Users = () => {
       const { data: pickupUsers, error: usersErr } = await supabase
         .from("user_account")
         .select("user_id, created_at")
-        .eq("pickup_or_dropoff", "Pickup");
+        .in("pickup_or_dropoff", ["Pickup", "pickup"]);
 
       if (usersErr) throw usersErr;
       if (!pickupUsers || pickupUsers.length === 0) {
@@ -676,7 +689,7 @@ const Users = () => {
                       {user.street_address ? addressToDisplayString({ street_address: user.street_address ?? "", city: user.city ?? "", state: user.state ?? "", zip_code: user.zip_code ?? "" }) : "—"}
                     </TableCell>
                     <TableCell className="text-center text-sm">
-                      {user.pickup_or_dropoff || "—"}
+                      {normalizeServiceType(user.pickup_or_dropoff) || "—"}
                     </TableCell>
                     <TableCell className="text-center">
                       {user.email_notifications ? (

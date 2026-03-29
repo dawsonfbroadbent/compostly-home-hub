@@ -43,6 +43,14 @@ interface EditUserDialogProps {
   onSuccess: () => void;
 }
 
+const normalizeServiceType = (value: string | null | undefined) => {
+  if (!value) return "";
+  const normalized = value.toLowerCase();
+  if (normalized === "pickup") return "Pickup";
+  if (normalized === "dropoff") return "Dropoff";
+  return "";
+};
+
 const EditUserDialog = ({
   open,
   onOpenChange,
@@ -67,7 +75,7 @@ const EditUserDialog = ({
         firstName: user.first_name,
         lastName: user.last_name,
         email: user.email,
-        pickupOrDropoff: user.pickup_or_dropoff || "",
+        pickupOrDropoff: normalizeServiceType(user.pickup_or_dropoff),
         emailNotifications: user.email_notifications,
         weeklyReminders: user.weekly_reminders,
       });

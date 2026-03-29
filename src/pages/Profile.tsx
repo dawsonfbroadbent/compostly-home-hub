@@ -22,6 +22,14 @@ import { User, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import AddressFields, { type AddressValue, validateAddress, addressToDisplayString } from "@/components/AddressFields";
 
+const normalizeServiceType = (value: string | null | undefined) => {
+  if (!value) return "";
+  const normalized = value.toLowerCase();
+  if (normalized === "pickup") return "Pickup";
+  if (normalized === "dropoff") return "Dropoff";
+  return "";
+};
+
 const Profile = () => {
   const { isLoggedIn, user, updateUser, logout } = useAuth();
   const navigate = useNavigate();
@@ -36,7 +44,7 @@ const Profile = () => {
     firstName: user?.first_name ?? "",
     lastName: user?.last_name ?? "",
     email: user?.email ?? "",
-    pickupOrDropoff: user?.pickup_or_dropoff ?? "",
+    pickupOrDropoff: normalizeServiceType(user?.pickup_or_dropoff),
     emailNotifications: user?.email_notifications ?? true,
     weeklyReminders: user?.weekly_reminders ?? true,
     newPassword: "",
@@ -66,7 +74,7 @@ const Profile = () => {
       firstName: user.first_name,
       lastName: user.last_name,
       email: user.email,
-      pickupOrDropoff: user.pickup_or_dropoff ?? "",
+      pickupOrDropoff: normalizeServiceType(user.pickup_or_dropoff),
       emailNotifications: user.email_notifications,
       weeklyReminders: user.weekly_reminders,
       newPassword: "",
@@ -162,7 +170,7 @@ const Profile = () => {
         city: row.city,
         state: row.state,
         zip_code: row.zip_code,
-        pickup_or_dropoff: row.pickup_or_dropoff,
+        pickup_or_dropoff: normalizeServiceType(row.pickup_or_dropoff),
         email_notifications: row.email_notifications ?? true,
         weekly_reminders: row.weekly_reminders ?? true,
       });
@@ -297,8 +305,8 @@ const Profile = () => {
               <>
                 <div><Label>Name</Label><Input value={user.first_name + " " + user.last_name} readOnly /></div>
                 <div><Label>Email</Label><Input value={user.email} readOnly /></div>
-                <div><Label>Service Type</Label><Input value={user.pickup_or_dropoff ?? ""} readOnly /></div>
-                {user.pickup_or_dropoff === "Pickup" && (
+                <div><Label>Service Type</Label><Input value={normalizeServiceType(user.pickup_or_dropoff)} readOnly /></div>
+                {normalizeServiceType(user.pickup_or_dropoff) === "Pickup" && (
                   <div><Label>Address</Label><Input value={addressToDisplayString({ street_address: user.street_address ?? "", city: user.city ?? "", state: user.state ?? "", zip_code: user.zip_code ?? "" })} readOnly /></div>
                 )}
               </>
