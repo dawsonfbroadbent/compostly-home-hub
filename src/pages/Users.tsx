@@ -51,7 +51,7 @@ type SortDirection = "asc" | "desc";
 
 const normalizeServiceType = (value: string | null | undefined): string | null => {
   if (!value) return null;
-  const normalized = value.toLowerCase();
+  const normalized = value.trim().toLowerCase();
   if (normalized === "pickup") return "Pickup";
   if (normalized === "dropoff") return "Dropoff";
   return value;
@@ -144,7 +144,8 @@ const Users = () => {
         const hasEarlyPickup = (pickups || []).some((p) => {
           if (p.account_id !== user.user_id) return false;
           const pickupCreated = new Date(p.created_at).getTime();
-          return pickupCreated - accountCreated <= twoWeeksMs;
+          const elapsedMs = pickupCreated - accountCreated;
+          return elapsedMs >= 0 && elapsedMs <= twoWeeksMs;
         });
         if (hasEarlyPickup) scheduledCount++;
       }

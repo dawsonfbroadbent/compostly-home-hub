@@ -24,7 +24,7 @@ import AddressFields, { type AddressValue, validateAddress, addressToDisplayStri
 
 const normalizeServiceType = (value: string | null | undefined) => {
   if (!value) return "";
-  const normalized = value.toLowerCase();
+  const normalized = value.trim().toLowerCase();
   if (normalized === "pickup") return "Pickup";
   if (normalized === "dropoff") return "Dropoff";
   return "";

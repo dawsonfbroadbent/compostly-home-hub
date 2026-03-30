@@ -5,7 +5,7 @@ const SESSION_KEY = "user_account_session";
 
 const normalizeServiceType = (value: string | null | undefined): string | null => {
   if (!value) return null;
-  const normalized = value.toLowerCase();
+  const normalized = value.trim().toLowerCase();
   if (normalized === "pickup") return "Pickup";
   if (normalized === "dropoff") return "Dropoff";
   return value;
