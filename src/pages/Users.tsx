@@ -773,7 +773,10 @@ const Users = () => {
           open={isEditDialogOpen}
           onOpenChange={setIsEditDialogOpen}
           user={editingUser}
-          onSuccess={fetchUsers}
+          onSuccess={() => {
+            fetchUsers();
+            fetchPickupOkr();
+          }}
         />
 
         {/* Delete Dialog */}
